@@ -29,7 +29,7 @@ public class TrainingNaiveBayes {
 	
 	public static void main(String[] args) {
 		Utilities util = new Utilities();
-		ArrayList<String> vocab = new ArrayList<>(util.makeVocab()); 
+//		ArrayList<String> vocab = new ArrayList<>(util.makeVocab()); 
 		String[] classVar = {"ham", "spam"};
 		new TrainingNaiveBayes().train(classVar,vocab);
 	}

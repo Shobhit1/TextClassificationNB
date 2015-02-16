@@ -1,64 +1,74 @@
 package ml.hw2;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Utilities {
 	String directoryPathHam = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/ham";
 	String directoryPathSpam  = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/spam";
 
+	HashMap<String, HashMap<String,Integer>> tokenHashMap = new HashMap<>();
+	
+	public Set<String> makeVocab(String directoryPath){
 
-	public List<String> makeVocab(){
+		Set<String> vocab = new HashSet<>();
+		HashMap<String, Integer> mapForWordCount = null;
+		for(File classFile : new File(directoryPath).listFiles()){
+			if(classFile.getName().charAt(0) != '.'){
 
-		File dirHam = new File(directoryPathHam);
-		File dirSpam = new File(directoryPathSpam);
-		File[] filesHam = dirHam.listFiles();
-		File[] filesSpam = dirSpam.listFiles();
-		List<String> vocab = new ArrayList<>();
-		//		List<String> vocabSpam = new ArrayList<>();
+				mapForWordCount = wordCount(classFile);
+				tokenHashMap.put(classFile.getName(), mapForWordCount);
+			}
+		}
 
-		for(File f : filesHam){
+		for(String s  : tokenHashMap.keySet()){
+			Set<String> temp = tokenHashMap.get(s).keySet();
+
+			vocab.addAll(temp);
+		}
+
+		return vocab;
+	}
+
+
+	/**
+	 * 
+	 * Map for word count
+	 * @param directoryPath
+	 * @return
+	 */
+
+	public HashMap<String, Integer> wordCount(File file){
+		//File file = new File(directoryPath);
+		HashMap<String, Integer> mapForWordCount = new HashMap<String, Integer>();
+		File[] files = file.listFiles();
+		for(File f : files){
 			if(f.isFile()){
 				Scanner scan = null;
 				try {
 					scan = new Scanner(f);
+					scan.useDelimiter("[^a-zA-Z]+");
 					while(scan.hasNext()){
-						vocab.addAll(Arrays.asList(scan.next().split("[^a-zA-Z]")));
+						String word = scan.next();
+						if(mapForWordCount.containsKey(word)){
+							mapForWordCount.put(word,mapForWordCount.get(word) + 1);
+						}
+						else{
+							mapForWordCount.put(word, 1);
+						}
 					}
 				} catch (Exception e) {
-					// TODO: handle exception
+					e.printStackTrace();
 				}
-
-
 			}
+
 		}
-
-		for(File fileSpam : filesSpam){
-			if(fileSpam.isFile()){
-				Scanner scan = null;
-				try {
-					scan = new Scanner(fileSpam);
-					while(scan.hasNext()){
-						vocab.addAll(Arrays.asList(scan.next().split("[^a-zA-Z]")));
-					}
-				} catch (Exception e) {
-					// TODO: handle exception
-				} 
-			}
-		}
-
-		return vocab;
-
-		//		System.out.println(vocab.toString());
-		//		System.out.println(vocab.size());
-
-
+		return mapForWordCount;
 	}
-
+	/*
 	public List<String> vocabHam(){
 		File dirHam = new File(directoryPathHam);
 
@@ -78,11 +88,11 @@ public class Utilities {
 				}
 			}
 		}
-		
+
 		return vocabHam;
 	}
-	
-	
+
+
 	public List<String> vocabSpam(){
 		File dirSpam = new File(directoryPathSpam);
 
@@ -102,7 +112,7 @@ public class Utilities {
 				}
 			}
 		}
-		
+
 		return vocabSpam;
 	}
 
@@ -119,15 +129,15 @@ public class Utilities {
 
 		return mapForCount;
 	}
-
+	 */
 	public static void main(String[] args) {
-		List<String> vocab = new Utilities().makeVocab();
-
+		Set<String> vocab = new Utilities().makeVocab("/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train");
+		System.out.println(vocab.toString());
 		System.out.println(vocab.size());
 
-		HashMap<String, Integer> count = new Utilities().countDocsForEachClass();
+		//		HashMap<String, Integer> count = new Utilities().countDocsForEachClass();
 
-		System.out.println(count.get("ham") + count.get("spam"));
+		//		System.out.println(count.get("ham") + count.get("spam"));
 
 
 	}
