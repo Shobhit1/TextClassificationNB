@@ -16,7 +16,7 @@ public class TrainingNaiveBayes {
 		Utilities util = new Utilities();
 		Set<String> vocab = util.makeVocab(directoryPath);
 		HashMap<String,HashMap<String,Double>> conditionalProbMapFinal = new HashMap<>();
-		
+
 		int hamNoOfFiles = util.countHam;
 		int SpamNoOfFiles = util.countSpam;
 		int totalFileCount = hamNoOfFiles + SpamNoOfFiles;
@@ -31,11 +31,11 @@ public class TrainingNaiveBayes {
 			else{
 				prior[1] = (double)SpamNoOfFiles/totalFileCount;
 			}
-			
+
 			conditionalProbMap.put("dummy",(double) 1 / (double)((util.tokenHashMap.get(c).get("totalWordsInClass")) + vocab.size()));
-			
-			
-			
+
+
+
 			for(String word : vocab){
 				Integer wordCount = util.tokenHashMap.get(c).get(word);
 				if(wordCount == null){
@@ -45,7 +45,7 @@ public class TrainingNaiveBayes {
 
 				conditionalProbMap.put(word, conditionProb);
 			}
-			
+
 			conditionalProbMapFinal.put(c, conditionalProbMap);
 		}
 
@@ -95,19 +95,23 @@ public class TrainingNaiveBayes {
 		File file = new File(directoryTestPath);
 		File[] files = file.listFiles();
 		for(File f: files){
-			System.out.println("Class " + f.getName());
-			for(File classFile: f.listFiles()){
-				if(classFile.isFile()){
-					String result = new TrainingNaiveBayes().applyNB(nb, classes, classFile);
-					//System.out.print(" - "+result);
-					if(result.equals(f.getName()))
-						success++;
-					total++;
+			if(f.getName().charAt(0) != '.'){
+				System.out.println("Class " + f.getName());
+				for(File classFile: f.listFiles()){
+					if(classFile.isFile()){
+						String result = new TrainingNaiveBayes().applyNB(nb, classes, classFile);
+						//System.out.print(" - "+result);
+						if(result.equals(f.getName()))
+							success++;
+						total++;
+					}
 				}
-			}
+			
 			System.out.println("Accuracy " + (double)success/total);
+			}
 		}
 
+		
 	}
 
 }
