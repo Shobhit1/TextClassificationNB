@@ -1,0 +1,41 @@
+package ml.hw2;
+
+import java.util.HashMap;
+import java.util.Set;
+
+public class NBTrainModel {
+	double prior;
+//	double conditionalProb;
+	HashMap<String, Double> conditionalProbMap;
+	Set<String> vocab;
+	
+	public NBTrainModel(double prior, HashMap<String,Double> conditionalProbMap, Set<String> vocab) {
+		// TODO Auto-generated constructor stub
+		this.prior = prior;
+		this.conditionalProbMap = conditionalProbMap;
+		
+	}
+	
+	public double getPrior() {
+		return prior;
+	}
+	public void setPrior(double prior) {
+		this.prior = prior;
+	}
+	public Set<String> getVocab() {
+		return vocab;
+	}
+	public void setVocab(Set<String> vocab) {
+		this.vocab = vocab;
+	}
+
+	public HashMap<String, Double> getConditionalProbMap() {
+		return conditionalProbMap;
+	}
+
+	public void setConditionalProbMap(HashMap<String, Double> conditionalProbMap) {
+		this.conditionalProbMap = conditionalProbMap;
+	}
+	
+	
+}
