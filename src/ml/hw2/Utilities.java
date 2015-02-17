@@ -1,6 +1,7 @@
 package ml.hw2;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -9,12 +10,12 @@ import java.util.Set;
 public class Utilities {
 	String directoryPathHam = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/ham";
 	String directoryPathSpam  = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/spam";
-	
+
 	public static HashMap<String, HashMap<String,Integer>> tokenHashMap = new HashMap<>();
 	public static int countSpam = 0;
 	public static int countHam = 0;
-	
-	
+
+
 	public Set<String> makeVocab(String directoryPath){
 
 		Set<String> vocab = new HashSet<>();
@@ -28,16 +29,11 @@ public class Utilities {
 		}
 
 		for(String s  : tokenHashMap.keySet()){
-			if(s.equalsIgnoreCase("ham")){
-				countHam++;
-			}
-			else{
-				countSpam++;
-			}
 			
-			
+
+
 			Set<String> temp = tokenHashMap.get(s).keySet();
-			
+
 			vocab.addAll(temp);
 		}
 
@@ -76,12 +72,37 @@ public class Utilities {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				if(file.getName().equalsIgnoreCase("ham")){
+					countHam++;
+				}
+				else{
+					countSpam++;
+				}
 			}
 
 		}
 		mapForWordCount.put("totalWordsInClass", totalWordsInClass);
 		return mapForWordCount;
 	}
+
+	public ArrayList<String> wordsInFile(File file){
+		ArrayList<String> wordsInFile = new ArrayList<String>();
+		Scanner scan = null;
+		try {
+			scan = new Scanner(file);
+			scan.useDelimiter("[^a-zA-Z]+");
+			while(scan.hasNext()){
+				String word = scan.next();
+				wordsInFile.add(word);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		scan.close();
+
+		return wordsInFile;
+	}
+
 	public static void main(String[] args) {
 		Set<String> vocab = new Utilities().makeVocab("/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train");
 		System.out.println(vocab.toString());

@@ -4,22 +4,23 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class NBTrainModel {
-	double prior;
+	double[] prior;
 //	double conditionalProb;
 	HashMap<String, Double> conditionalProbMap;
 	Set<String> vocab;
 	
-	public NBTrainModel(double prior, HashMap<String,Double> conditionalProbMap, Set<String> vocab) {
+	public NBTrainModel(double[] prior, HashMap<String,Double> conditionalProbMap, Set<String> vocab) {
 		// TODO Auto-generated constructor stub
 		this.prior = prior;
 		this.conditionalProbMap = conditionalProbMap;
+		this.vocab = vocab;
 		
 	}
 	
-	public double getPrior() {
+	public double[] getPrior() {
 		return prior;
 	}
-	public void setPrior(double prior) {
+	public void setPrior(double[] prior) {
 		this.prior = prior;
 	}
 	public Set<String> getVocab() {
