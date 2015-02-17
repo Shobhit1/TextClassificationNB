@@ -6,10 +6,10 @@ import java.util.Set;
 public class NBTrainModel {
 	double[] prior;
 //	double conditionalProb;
-	HashMap<String, Double> conditionalProbMap;
+	HashMap<String,HashMap<String, Double>> conditionalProbMap;
 	Set<String> vocab;
 	
-	public NBTrainModel(double[] prior, HashMap<String,Double> conditionalProbMap, Set<String> vocab) {
+	public NBTrainModel(double[] prior, HashMap<String, HashMap<String, Double>> conditionalProbMap, Set<String> vocab) {
 		// TODO Auto-generated constructor stub
 		this.prior = prior;
 		this.conditionalProbMap = conditionalProbMap;
@@ -30,11 +30,11 @@ public class NBTrainModel {
 		this.vocab = vocab;
 	}
 
-	public HashMap<String, Double> getConditionalProbMap() {
+	public HashMap<String, HashMap<String, Double>> getConditionalProbMap() {
 		return conditionalProbMap;
 	}
 
-	public void setConditionalProbMap(HashMap<String, Double> conditionalProbMap) {
+	public void setConditionalProbMap(HashMap<String, HashMap<String, Double>> conditionalProbMap) {
 		this.conditionalProbMap = conditionalProbMap;
 	}
 	

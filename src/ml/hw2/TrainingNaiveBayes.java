@@ -10,37 +10,46 @@ public class TrainingNaiveBayes {
 	private static String directoryPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train";
 	private static String directoryTestPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/test";
 
-	public NBTrainModel train(String[] classes, Set<String> vocab){
 
-		HashMap<String,Double> conditionalProbMap = new HashMap<>();
-
-		int hamNoOfFiles = Utilities.countHam;
-		int SpamNoOfFiles = Utilities.countSpam;
+	//	public NBTrainModel train(String[] classes, Set<String> vocab){
+	public NBTrainModel train(String[] classes){
+		Utilities util = new Utilities();
+		Set<String> vocab = util.makeVocab(directoryPath);
+		HashMap<String,HashMap<String,Double>> conditionalProbMapFinal = new HashMap<>();
+		
+		int hamNoOfFiles = util.countHam;
+		int SpamNoOfFiles = util.countSpam;
 		int totalFileCount = hamNoOfFiles + SpamNoOfFiles;
 
 		double[] prior = {0,0};
 
 		for(String c : classes){
+			HashMap<String,Double> conditionalProbMap = new HashMap<String, Double>();
 			if(c.equalsIgnoreCase("ham")){
 				prior[0] = (double)hamNoOfFiles/totalFileCount;
 			}
 			else{
 				prior[1] = (double)SpamNoOfFiles/totalFileCount;
 			}
-
-			conditionalProbMap.put("dummy",(double) 1 / (Utilities.tokenHashMap.get(c).get("totalWordsInClass")) + vocab.size());
-
+			
+			conditionalProbMap.put("dummy",(double) 1 / (double)((util.tokenHashMap.get(c).get("totalWordsInClass")) + vocab.size()));
+			
+			
+			
 			for(String word : vocab){
-				Integer wordCount = Utilities.tokenHashMap.get(c).get(word);
-				if(wordCount == null)
+				Integer wordCount = util.tokenHashMap.get(c).get(word);
+				if(wordCount == null){
 					wordCount = 0;
-				double conditionProb = (wordCount + 1) / (double)(Utilities.tokenHashMap.get(c).get("totalWordsInClass")) + vocab.size();
+				}
+				double conditionProb = (double)(wordCount + 1) / (double)((util.tokenHashMap.get(c).get("totalWordsInClass")) + vocab.size());
 
 				conditionalProbMap.put(word, conditionProb);
 			}
+			
+			conditionalProbMapFinal.put(c, conditionalProbMap);
 		}
 
-		NBTrainModel nbModel = new NBTrainModel(prior, conditionalProbMap, vocab);
+		NBTrainModel nbModel = new NBTrainModel(prior, conditionalProbMapFinal, vocab);
 
 		return nbModel;
 	}
@@ -59,11 +68,11 @@ public class TrainingNaiveBayes {
 			}
 
 			for(String word : words){
-				if(nbTrainModel.getConditionalProbMap().containsKey(word)){
-					score = score + Math.log(nbTrainModel.getConditionalProbMap().get(word));
+				if(nbTrainModel.getConditionalProbMap().get(c).containsKey(word)){
+					score = score + Math.log(nbTrainModel.getConditionalProbMap().get(c).get(word));
 				}
 				else{
-					score = score + Math.log(nbTrainModel.getConditionalProbMap().get("dummy"));
+					score = score + Math.log(nbTrainModel.getConditionalProbMap().get(c).get("dummy"));
 				}
 			}
 			scores.add(score);
@@ -80,8 +89,7 @@ public class TrainingNaiveBayes {
 
 	public static void main(String[] args) {
 		String[] classes = {"ham","spam"};
-		Set<String> vocab = new Utilities().makeVocab(directoryPath);
-		NBTrainModel nb = new TrainingNaiveBayes().train(classes, vocab);
+		NBTrainModel nb = new TrainingNaiveBayes().train(classes);
 		int success = 0;
 		int total = 0;
 		File file = new File(directoryTestPath);

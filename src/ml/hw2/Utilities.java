@@ -8,12 +8,14 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Utilities {
+
+
 	String directoryPathHam = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/ham";
 	String directoryPathSpam  = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/spam";
 
-	public static HashMap<String, HashMap<String,Integer>> tokenHashMap = new HashMap<>();
-	public static int countSpam = 0;
-	public static int countHam = 0;
+	public HashMap<String, HashMap<String,Integer>> tokenHashMap = new HashMap<>();
+	public int countSpam = 0;
+	public int countHam = 0;
 
 
 	public Set<String> makeVocab(String directoryPath){
@@ -29,8 +31,6 @@ public class Utilities {
 		}
 
 		for(String s  : tokenHashMap.keySet()){
-			
-
 
 			Set<String> temp = tokenHashMap.get(s).keySet();
 
@@ -60,8 +60,9 @@ public class Utilities {
 					scan = new Scanner(f);
 					scan.useDelimiter("[^a-zA-Z]+");
 					while(scan.hasNext()){
-						String word = scan.next();
 						totalWordsInClass++;
+						String word = scan.next();
+
 						if(mapForWordCount.containsKey(word)){
 							mapForWordCount.put(word,mapForWordCount.get(word) + 1);
 						}
@@ -102,7 +103,21 @@ public class Utilities {
 
 		return wordsInFile;
 	}
+	
+	
+	public HashMap<String, HashMap<String, Integer>> getTokenHashMap() {
+		return tokenHashMap;
+	}
 
+
+	public int getCountSpam() {
+		return countSpam;
+	}
+
+
+	public int getCountHam() {
+		return countHam;
+	}
 	public static void main(String[] args) {
 		Set<String> vocab = new Utilities().makeVocab("/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train");
 		System.out.println(vocab.toString());
