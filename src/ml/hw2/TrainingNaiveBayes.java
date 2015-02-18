@@ -11,7 +11,6 @@ public class TrainingNaiveBayes {
 	private static String directoryTestPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/test";
 
 
-	//	public NBTrainModel train(String[] classes, Set<String> vocab){
 	public NBTrainModel train(String[] classes){
 		Utilities util = new Utilities();
 		Set<String> vocab = util.makeVocab(directoryPath);
@@ -21,7 +20,7 @@ public class TrainingNaiveBayes {
 		int SpamNoOfFiles = util.countSpam;
 		int totalFileCount = hamNoOfFiles + SpamNoOfFiles;
 
-		double[] prior = {0,0};
+		double[] prior = {0.0,0.0};
 
 		for(String c : classes){
 			HashMap<String,Double> conditionalProbMap = new HashMap<String, Double>();
@@ -77,6 +76,7 @@ public class TrainingNaiveBayes {
 			}
 			scores.add(score);
 		}
+//		System.out.println(scores.toString());
 		if(scores.get(0) > scores.get(1)){
 			return "ham";
 		}
@@ -106,12 +106,11 @@ public class TrainingNaiveBayes {
 						total++;
 					}
 				}
-			
-			System.out.println("Accuracy " + (double)success/total);
+
+				System.out.println("Accuracy " + (double)success/total);
 			}
 		}
 
-		
 	}
 
 }

@@ -13,6 +13,8 @@ public class Utilities {
 	String directoryPathHam = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/ham";
 	String directoryPathSpam  = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/spam";
 
+	static String stopWordsPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/stopWords.txt";
+
 	public HashMap<String, HashMap<String,Integer>> tokenHashMap = new HashMap<>();
 	public int countSpam = 0;
 	public int countHam = 0;
@@ -52,6 +54,7 @@ public class Utilities {
 		//File file = new File(directoryPath);
 		int totalWordsInClass = 0;
 		HashMap<String, Integer> mapForWordCount = new HashMap<String, Integer>();
+		ArrayList<String> stopWords = stopWords(stopWordsPath);
 		File[] files = file.listFiles();
 		for(File f : files){
 			if(f.isFile()){
@@ -60,14 +63,17 @@ public class Utilities {
 					scan = new Scanner(f);
 					scan.useDelimiter("[^a-zA-Z]+");
 					while(scan.hasNext()){
-						totalWordsInClass++;
 						String word = scan.next();
+						if(!stopWords.contains(word)){
+							totalWordsInClass++;
 
-						if(mapForWordCount.containsKey(word)){
-							mapForWordCount.put(word,mapForWordCount.get(word) + 1);
-						}
-						else{
-							mapForWordCount.put(word, 1);
+
+							if(mapForWordCount.containsKey(word)){
+								mapForWordCount.put(word,mapForWordCount.get(word) + 1);
+							}
+							else{
+								mapForWordCount.put(word, 1);
+							}
 						}
 					}
 				} catch (Exception e) {
@@ -88,13 +94,16 @@ public class Utilities {
 
 	public ArrayList<String> wordsInFile(File file){
 		ArrayList<String> wordsInFile = new ArrayList<String>();
+		ArrayList<String> stopWords = stopWords(stopWordsPath);
 		Scanner scan = null;
 		try {
 			scan = new Scanner(file);
 			scan.useDelimiter("[^a-zA-Z]+");
 			while(scan.hasNext()){
 				String word = scan.next();
-				wordsInFile.add(word);
+				if(!stopWords.contains(word)){
+					wordsInFile.add(word);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -103,8 +112,28 @@ public class Utilities {
 
 		return wordsInFile;
 	}
-	
-	
+
+	public ArrayList<String> stopWords(String path){
+		ArrayList<String> stopWords = new ArrayList<String>();
+
+		Scanner scan = null;
+		try {
+			File file = new File(path);
+			scan = new Scanner(file);
+			scan.useDelimiter("\n");
+			while(scan.hasNext()){
+				String stopWord = scan.next();
+				stopWords.add(stopWord);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		scan.close();
+		return stopWords;
+	}
+
 	public HashMap<String, HashMap<String, Integer>> getTokenHashMap() {
 		return tokenHashMap;
 	}
@@ -118,15 +147,15 @@ public class Utilities {
 	public int getCountHam() {
 		return countHam;
 	}
+
 	public static void main(String[] args) {
 		Set<String> vocab = new Utilities().makeVocab("/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train");
 		System.out.println(vocab.toString());
 		System.out.println(vocab.size());
 
-		//		HashMap<String, Integer> count = new Utilities().countDocsForEachClass();
-
-		//		System.out.println(count.get("ham") + count.get("spam"));
-
+		ArrayList<String> stopWords = new Utilities().stopWords(stopWordsPath);
+		System.out.println(stopWords.toString());
+		System.out.println(stopWords.size());
 
 	}
 
