@@ -10,7 +10,14 @@ public class TrainingNaiveBayes {
 	private static String directoryPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train";
 	private static String directoryTestPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/test";
 
-
+/**
+ * 
+ * TRAINS THE DATA BASED ON NAIVE BAYES TRAINING MODEL 
+ * Inputs the classes array = {ham,spam}
+ * 
+ * @param classes
+ * @return
+ */
 	public NBTrainModel train(String[] classes){
 		Utilities util = new Utilities();
 		Set<String> vocab = util.makeVocab(directoryPath);
@@ -76,12 +83,10 @@ public class TrainingNaiveBayes {
 			}
 			scores.add(score);
 		}
-//		System.out.println(scores.toString());
 		if(scores.get(0) > scores.get(1)){
 			return "ham";
 		}
 		else{
-			//			scores.get(1);
 			return "spam";
 
 		}

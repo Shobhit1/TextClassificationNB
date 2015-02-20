@@ -51,23 +51,65 @@ public class Utilities {
 	 */
 
 	public HashMap<String, Integer> wordCount(File file){
-		//File file = new File(directoryPath);
+
 		int totalWordsInClass = 0;
 		HashMap<String, Integer> mapForWordCount = new HashMap<String, Integer>();
+
+		//adding stop words concept - to be removed later to make it in a different function
 		ArrayList<String> stopWords = stopWords(stopWordsPath);
+
 		File[] files = file.listFiles();
-		for(File f : files){
-			if(f.isFile()){
+		if(files != null){
+			for(File f : files){
+				if(f.isFile()){
+					Scanner scan = null;
+					try {
+						scan = new Scanner(f);
+						scan.useDelimiter("[^a-zA-Z]+");
+						int wordCount = 0;
+						while(scan.hasNext()){
+							String word = scan.next();
+							if(!stopWords.contains(word)){			//stop words
+								totalWordsInClass++;
+								wordCount++;
+
+								if(mapForWordCount.containsKey(word)){
+									mapForWordCount.put(word,mapForWordCount.get(word) + 1);
+								}
+								else{
+									mapForWordCount.put(word, 1);
+								}
+							}
+						}
+						mapForWordCount.put("fileWord", wordCount);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					scan.close();
+					if(file.getName().equalsIgnoreCase("ham")){
+						countHam++;
+					}
+					else{
+						countSpam++;
+					}
+				}
+			}
+			//
+		}
+
+		else{
+			if(file.isFile()){
 				Scanner scan = null;
 				try {
-					scan = new Scanner(f);
+					scan = new Scanner(file);
 					scan.useDelimiter("[^a-zA-Z]+");
+					int wordCount = 0;
+
 					while(scan.hasNext()){
 						String word = scan.next();
-						if(!stopWords.contains(word)){
+						if(!stopWords.contains(word)){			//stop words
 							totalWordsInClass++;
-
-
+							wordCount++;
 							if(mapForWordCount.containsKey(word)){
 								mapForWordCount.put(word,mapForWordCount.get(word) + 1);
 							}
@@ -76,32 +118,39 @@ public class Utilities {
 							}
 						}
 					}
+					mapForWordCount.put("fileWord", wordCount);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				if(file.getName().equalsIgnoreCase("ham")){
-					countHam++;
-				}
-				else{
-					countSpam++;
-				}
+				//				if(file.getName().equalsIgnoreCase("ham")){
+				//					countHam++;
+				//				}
+				//				else{
+				//					countSpam++;
+				//				}
 			}
-
 		}
 		mapForWordCount.put("totalWordsInClass", totalWordsInClass);
 		return mapForWordCount;
 	}
 
+	/**
+	 * Extracting all the words in a file and returning an arrayList of the words
+	 * @param file
+	 * @return
+	 */
+
+
 	public ArrayList<String> wordsInFile(File file){
 		ArrayList<String> wordsInFile = new ArrayList<String>();
-		ArrayList<String> stopWords = stopWords(stopWordsPath);
+		ArrayList<String> stopWords = stopWords(stopWordsPath);			//stop words
 		Scanner scan = null;
 		try {
 			scan = new Scanner(file);
 			scan.useDelimiter("[^a-zA-Z]+");
 			while(scan.hasNext()){
 				String word = scan.next();
-				if(!stopWords.contains(word)){
+				if(!stopWords.contains(word)){						//stop words
 					wordsInFile.add(word);
 				}
 			}
@@ -113,6 +162,12 @@ public class Utilities {
 		return wordsInFile;
 	}
 
+
+	/**
+	 * to calculate an array list containing all the stop words
+	 * @param path
+	 * @return
+	 */
 	public ArrayList<String> stopWords(String path){
 		ArrayList<String> stopWords = new ArrayList<String>();
 
