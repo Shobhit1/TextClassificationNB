@@ -66,12 +66,12 @@ public class Utilities {
 					try {
 						scan = new Scanner(f);
 						scan.useDelimiter("[^a-zA-Z]+");
-						int wordCount = 0;
+//						int wordCount = 0;
 						while(scan.hasNext()){
 							String word = scan.next();
 							if(!stopWords.contains(word)){			//stop words
 								totalWordsInClass++;
-								wordCount++;
+//								wordCount++;
 
 								if(mapForWordCount.containsKey(word)){
 									mapForWordCount.put(word,mapForWordCount.get(word) + 1);
@@ -81,7 +81,7 @@ public class Utilities {
 								}
 							}
 						}
-						mapForWordCount.put("fileWord", wordCount);
+//						mapForWordCount.put("fileWord", wordCount);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -103,13 +103,13 @@ public class Utilities {
 				try {
 					scan = new Scanner(file);
 					scan.useDelimiter("[^a-zA-Z]+");
-					int wordCount = 0;
+//					int wordCount = 0;
 
 					while(scan.hasNext()){
 						String word = scan.next();
 						if(!stopWords.contains(word)){			//stop words
 							totalWordsInClass++;
-							wordCount++;
+//							wordCount++;
 							if(mapForWordCount.containsKey(word)){
 								mapForWordCount.put(word,mapForWordCount.get(word) + 1);
 							}
@@ -118,7 +118,7 @@ public class Utilities {
 							}
 						}
 					}
-					mapForWordCount.put("fileWord", wordCount);
+//					mapForWordCount.put("fileWord", wordCount);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -1,16 +1,38 @@
 package ml.hw2;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
 public class LogisticRegressionClassifier{
 
+	private static int phase = 0;
+	private static long startTime, endTime, elapsedTime;
+
 	private static String directoryPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train";
-	//	private static String directoryTestPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/test";
+	private static String directoryTestPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/test";
 	Random rand = null;
 
+	/**
+	 * Timer function to check the time taken
+	 * by a function
+	 */
+	public static void timer()
+	{
+		if(phase == 0) {
+			startTime = System.currentTimeMillis();
+			phase = 1;
+		} else {
+			endTime = System.currentTimeMillis();
+			elapsedTime = endTime-startTime;
+			System.out.println("\nTime: " + elapsedTime + " msec.");
+			//			memory();
+			phase = 0;
+		}
+	}
 
 	/**
 	 * Used to assign the weights to every word in the vocab.
@@ -22,7 +44,7 @@ public class LogisticRegressionClassifier{
 		Utilities util = new Utilities();
 		rand = new Random();
 		Set<String> vocab = util.makeVocab(path);
-		System.out.println(vocab.size());
+		//		System.out.println(vocab.size());
 		for(String word : vocab){
 			double weight = -1 + (rand.nextDouble()*(1+1));
 			weightMap.put(word, weight);
@@ -97,26 +119,40 @@ public class LogisticRegressionClassifier{
 	 * RegressionLearn
 	 * @param path
 	 */
-	public void regressionLearn(String path){
-		double learningRate = 0.01;
-		double lembda = 0.01;
-
-		//		Utilities util = new Utilities();
-		//		Set<String> vocab = util.makeVocab(path);
+	public HashMap<String,Double> regressionLearn(String path){
+		
+		double learningRate = 0.005;
+		double lembda = 0.5;
 
 		HashMap<String, Double> weightMap = weightsAssignment(path);
+
+		HashMap<Integer,HashMap<String,Integer>> wordHamCount = null;
+		HashMap<Integer,HashMap<String,Integer>> wordSpamCount = null;
+		HashMap<Integer,HashMap<String,Integer>> wordCount = null;
+		HashMap<String,HashMap<Integer,Double>> probabilityMap = new HashMap<String, HashMap<Integer,Double>>();
+
 		File directory = new File(path);
 		File[] files = directory.listFiles();
 
-		HashMap<Integer,HashMap<String,Integer>> wordHamCount = wordCountInEachFile(files[1]);
-		HashMap<Integer,HashMap<String,Integer>> wordSpamCount = wordCountInEachFile(files[2]);
-		HashMap<Integer,HashMap<String,Integer>> wordCount = null;
-		HashMap<String,HashMap<Integer,Double>> probabilityMap = new HashMap<String, HashMap<Integer,Double>>();
+		if(files[0].getName().charAt(0) == '.'){
+
+			wordHamCount = wordCountInEachFile(files[1]);
+			wordSpamCount = wordCountInEachFile(files[2]);
+		}
+		else{
+			wordHamCount = wordCountInEachFile(files[0]);
+			wordSpamCount = wordCountInEachFile(files[1]);
+		}
+
+
+		/*
+		 * Calculating the Probability for each file
+		 * and storing it in a map.
+		 */
 
 		for(File f: files){
 			if(f.getName().charAt(0) != '.'){
 				HashMap<Integer,Double> probTempMap = new HashMap<Integer, Double>();
-				//			double prob = 0.0;
 				if(f.getName().equalsIgnoreCase("ham")){
 					wordCount = wordHamCount;
 				}
@@ -132,81 +168,119 @@ public class LogisticRegressionClassifier{
 			}
 		}
 
+		/*
+		 * Regression Learning starts from here
+		 */
 
-		for(String word : weightMap.keySet()){
-			double result = 0;
-			double weight = weightMap.get(word);
+		for(int k=0 ; k<=500; k++){
+			for(String word : weightMap.keySet()){
 
-			for(File f: files){
-				if(f.getName().equalsIgnoreCase("ham")){
-					wordCount = wordHamCount;
-				}
-				else{
-					wordCount = wordSpamCount;
-				}
-				File[] filesInFolder = f.listFiles();
-				if(f.getName().charAt(0) != '.'){
-					for(int i=0; i< filesInFolder.length ; i++){
-						String key = f.getName();
-						Integer totalWord = wordCount.get(i).get("fileWord");
-
-						result += totalWord * (1 - probabilityMap.get(f.getName()).get(i));
+				double result = 0.0;
+				double weight = weightMap.get(word);
+				double y = 0;
+				for(String f: new String[]{"spam","ham"}){
+					//if(f.getName().charAt(0) != '.'){
+					if(f.equalsIgnoreCase("ham")){
+						wordCount = wordHamCount;
+						y = 1;
 					}
+					else{
+						wordCount = wordSpamCount;
+
+						y = 0;
+					}
+					//}
+
+
+					for(Integer fileNumber : wordCount.keySet()){
+						//					File[] filesInFolder = f.listFiles();
+						//					if(f.getName().charAt(0) != '.'){
+						//						for(int i=0; i< filesInFolder.length ; i++){
+						Integer totalWord = wordCount.get(fileNumber).get(word);
+						if (totalWord == null){
+							totalWord = 0;
+						}
+
+						result += totalWord * (y - probabilityMap.get(f).get(fileNumber));
+					}
+
+
 				}
+
+				weight = weight + (learningRate * result) - (learningRate*lembda*weight);
+				weightMap.put(word,weight);
 			}
 
-			weight = weight + learningRate * result - (learningRate*lembda*weight);
-			weightMap.put(word,weight);
 		}
-		//			for(File f : files){
-		//				if(f.getName().charAt(0) != '.'){
-		//
-		//					if(f.getName().equalsIgnoreCase("ham")){
-		//						wordCount = wordHamCount;
-		//					}
-		//					else{
-		//						wordCount = wordSpamCount;
-		//					}
-		//					for(int i=0 ; i < f.listFiles().length ; i++){
-		//						countX = wordCount.get(i).get(word);
-		//						if(countX == null){
-		//							countX = 0;
-		//						}
-		//						prob = getProbability(weightMap,wordCount.get(i), f);
-		//
-		//						if(f.getName().equalsIgnoreCase("spam")){
-		//							countY = 1;
-		//						}
-		//						else{
-		//							countY = 0;
-		//						}
-		//		result = result + (double)countX*((double)countY - prob);
-		//		tempWeightMap.put(word, (weightMap.get(word) + ((learningRate)*(result)) - (learningRate * lembda * weightMap.get(word))));
-		//}
-		//					System.out.println();
-
-		//}
-
-		//			System.out.println("word = " + word + "  - 1st Weight : " + weightMap.get(word) + " - changing to : --> " + tempWeightMap.get(word));
-		//weightMap.put(word, tempWeightMap.get(word));
-
-		//}
-
-		System.out.println(weightMap.toString());
+		return weightMap;
 	}
 
-	
-	
-	
-	
-	public static void main(String[] args) {
+
+	public String applyLogisticRegression(HashMap<String, Double> weightMapLearned, File file) throws FileNotFoundException{
+		double weightZero = 0.1;
+		double result = 0.0;
+		double weightCurrent = 0.0;
+		int countOfWord = 0;
+		//		HashMap<String,Double> weightMapLearned = regressionLearn(directoryPath);
+
+		HashMap<String, Integer> wordCountMap = new Utilities().wordCount(file);
+
+		//calculating words in each file
+		ArrayList<String> words = new Utilities().wordsInFile(file);
+
+		for(String word: words){
+			if(weightMapLearned.containsKey(word)){
+				weightCurrent = weightMapLearned.get(word);
+			}
+			if(wordCountMap.containsKey(word)){
+				countOfWord = wordCountMap.get(word);
+			}
+			result += (weightCurrent * countOfWord);
+		}
+
+		if(weightZero + result > 0){
+			return "ham";
+		}
+		else{
+			return "spam";
+		}
+
+	}
+
+
+	public static void main(String[] args) {	
+		int success = 0;
+		int total = 0;
 		HashMap<String,Double> weights = new LogisticRegressionClassifier().weightsAssignment(directoryPath);
-
 		System.out.println(weights.size());
+		timer();
+		HashMap<String,Double> weightMapLearned = new LogisticRegressionClassifier().regressionLearn(directoryPath);
+		
 
-		new LogisticRegressionClassifier().regressionLearn(directoryPath);
+		File file = new File(directoryTestPath);
+		File[] files = file.listFiles();
+		for(File f: files){
+			if(f.getName().charAt(0) != '.'){
+				for(File classFile: f.listFiles()){
+					if(classFile.isFile()){
+						String result;
+						try {
+							result = new LogisticRegressionClassifier().applyLogisticRegression(weightMapLearned,classFile);
 
+							if(result.equals(f.getName()))
+								success++;
+							total++;
+						}
 
+						catch (FileNotFoundException e) {
+							e.printStackTrace();
+						}
+					} 
 
+				}
+				System.out.println("Accuracy " + (double)success/total);
+			}
+		}
+		timer();
 	}
 }
