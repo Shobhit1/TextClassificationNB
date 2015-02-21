@@ -7,8 +7,8 @@ import java.util.Set;
 
 public class TrainingNaiveBayes {
 	//	private Utilities util2;
-	private static String directoryPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train";
-	private static String directoryTestPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/test";
+//	private static String directoryPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train";
+//	private static String directoryTestPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/test";
 
 /**
  * 
@@ -18,7 +18,7 @@ public class TrainingNaiveBayes {
  * @param classes
  * @return
  */
-	public NBTrainModel train(String[] classes, boolean stopWordCheck){
+	public NBTrainModel train(String directoryPath, String[] classes, boolean stopWordCheck){
 		Utilities util = new Utilities();
 		Set<String> vocab = util.makeVocab(directoryPath, stopWordCheck);
 		HashMap<String,HashMap<String,Double>> conditionalProbMapFinal = new HashMap<>();
@@ -92,26 +92,16 @@ public class TrainingNaiveBayes {
 		}
 	}
 
-	public static void main(String[] args) {
+	public void run(String pathTrain, String pathTest, boolean stopWordCheck){
 		String[] classes = {"ham","spam"};
-		String stopWordPrint = args[0].toString();
-		boolean stopWords;
-		
-		if(stopWordPrint.equalsIgnoreCase("Yes")){
-			stopWords = Boolean.TRUE;
-		}
-		else{
-			stopWords = Boolean.FALSE;
-		}
-		
-		NBTrainModel nb = new TrainingNaiveBayes().train(classes, stopWords);
+		NBTrainModel nb = new TrainingNaiveBayes().train(pathTrain, classes, stopWordCheck);
 		int success = 0;
 		int total = 0;
-		File file = new File(directoryTestPath);
+		File file = new File(pathTest);
 		File[] files = file.listFiles();
 		for(File f: files){
 			if(f.getName().charAt(0) != '.'){
-				System.out.println("Class " + f.getName());
+//				System.out.println("Class " + f.getName());
 				for(File classFile: f.listFiles()){
 					if(classFile.isFile()){
 						String result = new TrainingNaiveBayes().applyNB(nb, classes, classFile);
@@ -121,11 +111,50 @@ public class TrainingNaiveBayes {
 						total++;
 					}
 				}
-
-				System.out.println("Accuracy " + (double)success/total);
+				System.out.println("Accuracy for " + f.getName() + " " + (double)success/total);
 			}
 		}
-
+//		return (double)success/total;
+//		return total;
+		
+	}
+	
+	public static void main(String[] args) {
+//		String[] classes = {"ham","spam"};
+//		String stopWordPrint = args[0].toString();
+//		boolean stopWords;
+//		
+//		if(stopWordPrint.equalsIgnoreCase("Yes")){
+//			stopWords = Boolean.TRUE;
+//		}
+//		else{
+//			stopWords = Boolean.FALSE;
+//		}
+//		
+//		NBTrainModel nb = new TrainingNaiveBayes().train(directoryPath, classes, stopWords);
+//		int success = 0;
+//		int total = 0;
+//		File file = new File(directoryTestPath);
+//		File[] files = file.listFiles();
+//		for(File f: files){
+//			if(f.getName().charAt(0) != '.'){
+//				System.out.println("Class " + f.getName());
+//				for(File classFile: f.listFiles()){
+//					if(classFile.isFile()){
+//						String result = new TrainingNaiveBayes().applyNB(nb, classes, classFile);
+//						//System.out.print(" - "+result);
+//						if(result.equals(f.getName()))
+//							success++;
+//						total++;
+//					}
+//				}
+//
+//				System.out.println("Accuracy " + (double)success/total);
+//			}
+//		}
+		
+//		new TrainingNaiveBayes().run(directoryPath,directoryTestPath,false);
+		
 	}
 
 }

@@ -12,8 +12,8 @@ public class LogisticRegressionClassifier{
 	private static int phase = 0;
 	private static long startTime, endTime, elapsedTime;
 
-	private static String directoryPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train";
-	private static String directoryTestPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/test";
+//	private static String directoryPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train";
+//	private static String directoryTestPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/test";
 	Random rand = null;
 
 	/**
@@ -119,10 +119,10 @@ public class LogisticRegressionClassifier{
 	 * RegressionLearn
 	 * @param path
 	 */
-	public HashMap<String,Double> regressionLearn(String path, boolean stopWordCheck){
+	public HashMap<String,Double> regressionLearn(String path, boolean stopWordCheck, double lembda, double learningRate, int noOfIterations){
 
-		double learningRate = 0.005;
-		double lembda = 0.5;
+//		double learningRate = 0.005;
+//		double lembda = 0.5;
 
 		HashMap<String, Double> weightMap = weightsAssignment(path, stopWordCheck);
 
@@ -172,7 +172,7 @@ public class LogisticRegressionClassifier{
 		 * Regression Learning starts from here
 		 */
 
-		for(int k=0 ; k<=500; k++){
+		for(int k=0 ; k<=noOfIterations; k++){
 			for(String word : weightMap.keySet()){
 
 				double result = 0.0;
@@ -221,7 +221,6 @@ public class LogisticRegressionClassifier{
 		double result = 0.0;
 		double weightCurrent = 0.0;
 		int countOfWord = 0;
-		//		HashMap<String,Double> weightMapLearned = regressionLearn(directoryPath);
 
 		HashMap<String, Integer> wordCountMap = new Utilities().wordCount(file, stopWordCheck);
 
@@ -247,27 +246,12 @@ public class LogisticRegressionClassifier{
 
 	}
 
-
-	public static void main(String[] args) {	
+	public void run(String learnDirectoryPath, String testDirectoryPath, boolean stopWordCheck, double lembda, int noOfIterations){
 		int success = 0;
 		int total = 0;
-		String stopWordPrint = args[0].toString();
-		boolean stopWords;
-
-		if(stopWordPrint.equalsIgnoreCase("Yes")){
-			stopWords = Boolean.TRUE;
-		}
-		else{
-			stopWords = Boolean.FALSE;
-		}
-
-		HashMap<String,Double> weights = new LogisticRegressionClassifier().weightsAssignment(directoryPath, stopWords);
-		System.out.println(weights.size());
-		timer();
-		HashMap<String,Double> weightMapLearned = new LogisticRegressionClassifier().regressionLearn(directoryPath, stopWords);
-
-
-		File file = new File(directoryTestPath);
+		double learningRate = 0.01;
+		HashMap<String,Double> weightMapLearned = new LogisticRegressionClassifier().regressionLearn(learnDirectoryPath, stopWordCheck, lembda, learningRate, noOfIterations);
+		File file = new File(testDirectoryPath);
 		File[] files = file.listFiles();
 		for(File f: files){
 			if(f.getName().charAt(0) != '.'){
@@ -275,7 +259,7 @@ public class LogisticRegressionClassifier{
 					if(classFile.isFile()){
 						String result;
 						try {
-							result = new LogisticRegressionClassifier().applyLogisticRegression(weightMapLearned,classFile, stopWords);
+							result = new LogisticRegressionClassifier().applyLogisticRegression(weightMapLearned,classFile, stopWordCheck);
 
 							if(result.equals(f.getName()))
 								success++;
@@ -288,9 +272,55 @@ public class LogisticRegressionClassifier{
 					} 
 
 				}
-				System.out.println("Accuracy " + (double)success/total);
+				System.out.println("Accuracy for " + f.getName() + " " +  (double)success/total);
 			}
 		}
-		timer();
+
 	}
+
+	//	public static void main(String[] args) {	
+	//		int success = 0;
+	//		int total = 0;
+	//		String stopWordPrint = args[0].toString();
+	//		boolean stopWords;
+	//
+	//		if(stopWordPrint.equalsIgnoreCase("Yes")){
+	//			stopWords = Boolean.TRUE;
+	//		}
+	//		else{
+	//			stopWords = Boolean.FALSE;
+	//		}
+	//
+	//		//HashMap<String,Double> weights = new LogisticRegressionClassifier().weightsAssignment(directoryPath, stopWords);
+	//		//System.out.println(weights.size());
+	//		timer();
+	//		HashMap<String,Double> weightMapLearned = new LogisticRegressionClassifier().regressionLearn(directoryPath, stopWords);
+	//
+	//
+	//		File file = new File(directoryTestPath);
+	//		File[] files = file.listFiles();
+	//		for(File f: files){
+	//			if(f.getName().charAt(0) != '.'){
+	//				for(File classFile: f.listFiles()){
+	//					if(classFile.isFile()){
+	//						String result;
+	//						try {
+	//							result = new LogisticRegressionClassifier().applyLogisticRegression(weightMapLearned,classFile, stopWords);
+	//
+	//							if(result.equals(f.getName()))
+	//								success++;
+	//							total++;
+	//						}
+	//
+	//						catch (FileNotFoundException e) {
+	//							e.printStackTrace();
+	//						}
+	//					} 
+	//
+	//				}
+	//				System.out.println("Accuracy " + (double)success/total);
+	//			}
+	//		}
+	//		timer();
+	//	}
 }

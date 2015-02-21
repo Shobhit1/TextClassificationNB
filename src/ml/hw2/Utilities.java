@@ -10,10 +10,12 @@ import java.util.Set;
 public class Utilities {
 
 
-	String directoryPathHam = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/ham";
-	String directoryPathSpam  = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/spam";
-
-	static String stopWordsPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/stopWords.txt";
+//	String directoryPathHam = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/ham";
+//	String directoryPathSpam  = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train/spam";
+	
+//	static String fileDirectory = System.getProperty("user.dir");
+	
+	static String stopWordsPath = System.getProperty("user.dir") + System.getProperty("file.separator")+ "stopWords.txt";
 
 	public HashMap<String, HashMap<String,Integer>> tokenHashMap = new HashMap<>();
 	public int countSpam = 0;
