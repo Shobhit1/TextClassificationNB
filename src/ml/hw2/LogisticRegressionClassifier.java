@@ -39,11 +39,11 @@ public class LogisticRegressionClassifier{
 	 * @param path
 	 * @return
 	 */
-	public HashMap<String,Double> weightsAssignment(String path){
+	public HashMap<String,Double> weightsAssignment(String path,boolean stopWordCheck){
 		HashMap<String, Double> weightMap = new HashMap<String, Double>();
 		Utilities util = new Utilities();
 		rand = new Random();
-		Set<String> vocab = util.makeVocab(path);
+		Set<String> vocab = util.makeVocab(path,stopWordCheck);
 		//		System.out.println(vocab.size());
 		for(String word : vocab){
 			double weight = -1 + (rand.nextDouble()*(1+1));
@@ -60,12 +60,12 @@ public class LogisticRegressionClassifier{
 	 * @return
 	 */
 
-	public HashMap<Integer,HashMap<String,Integer>> wordCountInEachFile(File file){
+	public HashMap<Integer,HashMap<String,Integer>> wordCountInEachFile(File file, boolean stopWordCheck){
 		int fileCount = 0;
 		Utilities util = new Utilities();
 		HashMap<Integer,HashMap<String,Integer>> wordCountInAllFiles = new HashMap<Integer, HashMap<String,Integer>>();
 		for(File f : file.listFiles()){
-			HashMap<String,Integer> wordCount = util.wordCount(f);
+			HashMap<String,Integer> wordCount = util.wordCount(f, stopWordCheck);
 			wordCountInAllFiles.put(fileCount, wordCount);
 			fileCount++;
 		}
@@ -80,12 +80,12 @@ public class LogisticRegressionClassifier{
 	 * @param file - individual files
 	 * @return
 	 */
-	public int countOfKeyInFile(String key, File file){
+	public int countOfKeyInFile(String key, File file, boolean stopWordCheck){
 		//		int count = 0;
 		System.out.println(file.getName());
 		System.out.println("Inside countO");
 		Utilities util = new Utilities();
-		HashMap<String,Integer> wordCount = util.wordCount(file);
+		HashMap<String,Integer> wordCount = util.wordCount(file, stopWordCheck);
 
 		if(wordCount.containsKey(key)){
 			return wordCount.get(key);
@@ -119,12 +119,12 @@ public class LogisticRegressionClassifier{
 	 * RegressionLearn
 	 * @param path
 	 */
-	public HashMap<String,Double> regressionLearn(String path){
-		
+	public HashMap<String,Double> regressionLearn(String path, boolean stopWordCheck){
+
 		double learningRate = 0.005;
 		double lembda = 0.5;
 
-		HashMap<String, Double> weightMap = weightsAssignment(path);
+		HashMap<String, Double> weightMap = weightsAssignment(path, stopWordCheck);
 
 		HashMap<Integer,HashMap<String,Integer>> wordHamCount = null;
 		HashMap<Integer,HashMap<String,Integer>> wordSpamCount = null;
@@ -136,12 +136,12 @@ public class LogisticRegressionClassifier{
 
 		if(files[0].getName().charAt(0) == '.'){
 
-			wordHamCount = wordCountInEachFile(files[1]);
-			wordSpamCount = wordCountInEachFile(files[2]);
+			wordHamCount = wordCountInEachFile(files[1], stopWordCheck);
+			wordSpamCount = wordCountInEachFile(files[2], stopWordCheck);
 		}
 		else{
-			wordHamCount = wordCountInEachFile(files[0]);
-			wordSpamCount = wordCountInEachFile(files[1]);
+			wordHamCount = wordCountInEachFile(files[0], stopWordCheck);
+			wordSpamCount = wordCountInEachFile(files[1], stopWordCheck);
 		}
 
 
@@ -216,14 +216,14 @@ public class LogisticRegressionClassifier{
 	}
 
 
-	public String applyLogisticRegression(HashMap<String, Double> weightMapLearned, File file) throws FileNotFoundException{
+	public String applyLogisticRegression(HashMap<String, Double> weightMapLearned, File file, boolean stopWordCheck) throws FileNotFoundException{
 		double weightZero = 0.1;
 		double result = 0.0;
 		double weightCurrent = 0.0;
 		int countOfWord = 0;
 		//		HashMap<String,Double> weightMapLearned = regressionLearn(directoryPath);
 
-		HashMap<String, Integer> wordCountMap = new Utilities().wordCount(file);
+		HashMap<String, Integer> wordCountMap = new Utilities().wordCount(file, stopWordCheck);
 
 		//calculating words in each file
 		ArrayList<String> words = new Utilities().wordsInFile(file);
@@ -251,11 +251,21 @@ public class LogisticRegressionClassifier{
 	public static void main(String[] args) {	
 		int success = 0;
 		int total = 0;
-		HashMap<String,Double> weights = new LogisticRegressionClassifier().weightsAssignment(directoryPath);
+		String stopWordPrint = args[0].toString();
+		boolean stopWords;
+
+		if(stopWordPrint.equalsIgnoreCase("Yes")){
+			stopWords = Boolean.TRUE;
+		}
+		else{
+			stopWords = Boolean.FALSE;
+		}
+
+		HashMap<String,Double> weights = new LogisticRegressionClassifier().weightsAssignment(directoryPath, stopWords);
 		System.out.println(weights.size());
 		timer();
-		HashMap<String,Double> weightMapLearned = new LogisticRegressionClassifier().regressionLearn(directoryPath);
-		
+		HashMap<String,Double> weightMapLearned = new LogisticRegressionClassifier().regressionLearn(directoryPath, stopWords);
+
 
 		File file = new File(directoryTestPath);
 		File[] files = file.listFiles();
@@ -265,7 +275,7 @@ public class LogisticRegressionClassifier{
 					if(classFile.isFile()){
 						String result;
 						try {
-							result = new LogisticRegressionClassifier().applyLogisticRegression(weightMapLearned,classFile);
+							result = new LogisticRegressionClassifier().applyLogisticRegression(weightMapLearned,classFile, stopWords);
 
 							if(result.equals(f.getName()))
 								success++;

@@ -20,14 +20,14 @@ public class Utilities {
 	public int countHam = 0;
 
 
-	public Set<String> makeVocab(String directoryPath){
+	public Set<String> makeVocab(String directoryPath, boolean stopWordCheck){
 
 		Set<String> vocab = new HashSet<>();
 		HashMap<String, Integer> mapForWordCount = null;
 		for(File classFile : new File(directoryPath).listFiles()){
 			if(classFile.getName().charAt(0) != '.'){
 
-				mapForWordCount = wordCount(classFile);
+				mapForWordCount = wordCount(classFile, stopWordCheck);
 				tokenHashMap.put(classFile.getName(), mapForWordCount);
 			}
 		}
@@ -50,7 +50,7 @@ public class Utilities {
 	 * @return
 	 */
 
-	public HashMap<String, Integer> wordCount(File file){
+	public HashMap<String, Integer> wordCount(File file, boolean stopWordCheck){
 
 		int totalWordsInClass = 0;
 		HashMap<String, Integer> mapForWordCount = new HashMap<String, Integer>();
@@ -66,12 +66,23 @@ public class Utilities {
 					try {
 						scan = new Scanner(f);
 						scan.useDelimiter("[^a-zA-Z]+");
-//						int wordCount = 0;
 						while(scan.hasNext()){
 							String word = scan.next();
-							if(!stopWords.contains(word)){			//stop words
+							if(stopWordCheck){
+								if(!stopWords.contains(word)){			//stop words
+									totalWordsInClass++;
+
+									if(mapForWordCount.containsKey(word)){
+										mapForWordCount.put(word,mapForWordCount.get(word) + 1);
+									}
+									else{
+										mapForWordCount.put(word, 1);
+									}
+								}
+							}
+							//						}
+							else{
 								totalWordsInClass++;
-//								wordCount++;
 
 								if(mapForWordCount.containsKey(word)){
 									mapForWordCount.put(word,mapForWordCount.get(word) + 1);
@@ -81,7 +92,6 @@ public class Utilities {
 								}
 							}
 						}
-//						mapForWordCount.put("fileWord", wordCount);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -103,13 +113,25 @@ public class Utilities {
 				try {
 					scan = new Scanner(file);
 					scan.useDelimiter("[^a-zA-Z]+");
-//					int wordCount = 0;
 
 					while(scan.hasNext()){
 						String word = scan.next();
-						if(!stopWords.contains(word)){			//stop words
+						if(stopWordCheck){
+							if(!stopWords.contains(word)){			//stop words
+								totalWordsInClass++;
+
+								if(mapForWordCount.containsKey(word)){
+									mapForWordCount.put(word,mapForWordCount.get(word) + 1);
+								}
+								else{
+									mapForWordCount.put(word, 1);
+								}
+							}
+						}
+						//						}
+						else{
 							totalWordsInClass++;
-//							wordCount++;
+
 							if(mapForWordCount.containsKey(word)){
 								mapForWordCount.put(word,mapForWordCount.get(word) + 1);
 							}
@@ -118,7 +140,6 @@ public class Utilities {
 							}
 						}
 					}
-//					mapForWordCount.put("fileWord", wordCount);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -204,9 +225,10 @@ public class Utilities {
 	}
 
 	public static void main(String[] args) {
-		Set<String> vocab = new Utilities().makeVocab("/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train");
-		System.out.println(vocab.toString());
-		System.out.println(vocab.size());
+		
+//		Set<String> vocab = new Utilities().makeVocab("/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train");
+//		System.out.println(vocab.toString());
+//		System.out.println(vocab.size());
 
 		ArrayList<String> stopWords = new Utilities().stopWords(stopWordsPath);
 		System.out.println(stopWords.toString());

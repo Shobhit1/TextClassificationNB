@@ -18,9 +18,9 @@ public class TrainingNaiveBayes {
  * @param classes
  * @return
  */
-	public NBTrainModel train(String[] classes){
+	public NBTrainModel train(String[] classes, boolean stopWordCheck){
 		Utilities util = new Utilities();
-		Set<String> vocab = util.makeVocab(directoryPath);
+		Set<String> vocab = util.makeVocab(directoryPath, stopWordCheck);
 		HashMap<String,HashMap<String,Double>> conditionalProbMapFinal = new HashMap<>();
 
 		int hamNoOfFiles = util.countHam;
@@ -94,7 +94,17 @@ public class TrainingNaiveBayes {
 
 	public static void main(String[] args) {
 		String[] classes = {"ham","spam"};
-		NBTrainModel nb = new TrainingNaiveBayes().train(classes);
+		String stopWordPrint = args[0].toString();
+		boolean stopWords;
+		
+		if(stopWordPrint.equalsIgnoreCase("Yes")){
+			stopWords = Boolean.TRUE;
+		}
+		else{
+			stopWords = Boolean.FALSE;
+		}
+		
+		NBTrainModel nb = new TrainingNaiveBayes().train(classes, stopWords);
 		int success = 0;
 		int total = 0;
 		File file = new File(directoryTestPath);
