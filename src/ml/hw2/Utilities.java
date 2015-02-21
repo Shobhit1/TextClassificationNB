@@ -67,7 +67,7 @@ public class Utilities {
 					Scanner scan = null;
 					try {
 						scan = new Scanner(f);
-						scan.useDelimiter("[^a-zA-Z]+");
+						scan.useDelimiter("[^a-zA-Z']+");
 						while(scan.hasNext()){
 							String word = scan.next();
 							if(stopWordCheck){
@@ -114,7 +114,7 @@ public class Utilities {
 				Scanner scan = null;
 				try {
 					scan = new Scanner(file);
-					scan.useDelimiter("[^a-zA-Z]+");
+					scan.useDelimiter("[^a-zA-Z']+");
 
 					while(scan.hasNext()){
 						String word = scan.next();
@@ -170,7 +170,7 @@ public class Utilities {
 		Scanner scan = null;
 		try {
 			scan = new Scanner(file);
-			scan.useDelimiter("[^a-zA-Z]+");
+			scan.useDelimiter("[^a-zA-Z']+");
 			while(scan.hasNext()){
 				String word = scan.next();
 				if(!stopWords.contains(word)){						//stop words
@@ -226,16 +226,16 @@ public class Utilities {
 		return countHam;
 	}
 
-	public static void main(String[] args) {
+//	public static void main(String[] args) {
 		
 //		Set<String> vocab = new Utilities().makeVocab("/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train");
 //		System.out.println(vocab.toString());
 //		System.out.println(vocab.size());
 
-		ArrayList<String> stopWords = new Utilities().stopWords(stopWordsPath);
-		System.out.println(stopWords.toString());
-		System.out.println(stopWords.size());
+//		ArrayList<String> stopWords = new Utilities().stopWords(stopWordsPath);
+//		System.out.println(stopWords.toString());
+//		System.out.println(stopWords.size());
 
-	}
+//	}
 
 }

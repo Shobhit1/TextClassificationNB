@@ -12,8 +12,6 @@ public class LogisticRegressionClassifier{
 	private static int phase = 0;
 	private static long startTime, endTime, elapsedTime;
 
-//	private static String directoryPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train";
-//	private static String directoryTestPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/test";
 	Random rand = null;
 
 	/**
@@ -102,14 +100,15 @@ public class LogisticRegressionClassifier{
 	 */
 
 	public double getProbability(HashMap<String,Double> weightMap,HashMap<String,Integer> countMap, File file){
-		//		System.out.println("Inside probabilty generation");
 		double sum = 0.0;
 		for(String key : countMap.keySet()){
+			sum = 0.1;
 			sum = sum + (weightMap.get(key) * countMap.get(key)); 
 		}
 
 		sum = 1 + Math.exp(sum);
-		//		System.out.println("probability generation success");
+//		sum = Math.exp(sum);
+
 		return (1/sum);	
 	}
 
@@ -121,8 +120,6 @@ public class LogisticRegressionClassifier{
 	 */
 	public HashMap<String,Double> regressionLearn(String path, boolean stopWordCheck, double lembda, double learningRate, int noOfIterations){
 
-//		double learningRate = 0.005;
-//		double lembda = 0.5;
 
 		HashMap<String, Double> weightMap = weightsAssignment(path, stopWordCheck);
 
@@ -150,52 +147,45 @@ public class LogisticRegressionClassifier{
 		 * and storing it in a map.
 		 */
 
-		for(File f: files){
-			if(f.getName().charAt(0) != '.'){
-				HashMap<Integer,Double> probTempMap = new HashMap<Integer, Double>();
-				if(f.getName().equalsIgnoreCase("ham")){
-					wordCount = wordHamCount;
-				}
-				else{
-					wordCount = wordSpamCount;
-				}
-				for(int i=0 ; i < f.listFiles().length ; i++){
-					double prob = getProbability(weightMap,wordCount.get(i), f);
-					probTempMap.put(i, prob);
-				}
-
-				probabilityMap.put(f.getName(), probTempMap);
-			}
-		}
-
-		/*
-		 * Regression Learning starts from here
-		 */
-
 		for(int k=0 ; k<=noOfIterations; k++){
+			for(File f: files){
+				if(f.getName().charAt(0) != '.'){
+					HashMap<Integer,Double> probTempMap = new HashMap<Integer, Double>();
+					if(f.getName().equalsIgnoreCase("ham")){
+						wordCount = wordHamCount;
+					}
+					else{
+						wordCount = wordSpamCount;
+					}
+					for(int i=0 ; i < f.listFiles().length ; i++){
+						double prob = getProbability(weightMap,wordCount.get(i), f);
+						probTempMap.put(i, prob);
+					}
+
+					probabilityMap.put(f.getName(), probTempMap);
+				}
+			}
+
+			/*
+			 * Regression Learning starts from here
+			 */
+
 			for(String word : weightMap.keySet()){
 
 				double result = 0.0;
 				double weight = weightMap.get(word);
 				double y = 1;			//changed this
 				for(String f: new String[]{"spam","ham"}){
-					//if(f.getName().charAt(0) != '.'){
 					if(f.equalsIgnoreCase("ham")){
 						wordCount = wordHamCount;
-//						y = 0;
+						y = 0;
 					}
 					else{
 						wordCount = wordSpamCount;
-
-//						y = 1;
+						y = 1;
 					}
-					//}
-
 
 					for(Integer fileNumber : wordCount.keySet()){
-						//					File[] filesInFolder = f.listFiles();
-						//					if(f.getName().charAt(0) != '.'){
-						//						for(int i=0; i< filesInFolder.length ; i++){
 						Integer totalWord = wordCount.get(fileNumber).get(word);
 						if (totalWord == null){
 							totalWord = 0;
@@ -204,9 +194,7 @@ public class LogisticRegressionClassifier{
 						result += totalWord * (y - probabilityMap.get(f).get(fileNumber));
 					}
 
-
 				}
-
 				weight = weight + (learningRate * result) - (learningRate*lembda*weight);
 				weightMap.put(word,weight);
 			}
@@ -237,7 +225,7 @@ public class LogisticRegressionClassifier{
 			result += (weightCurrent * countOfWord);
 		}
 
-		if(weightZero + result > 0){
+		if(weightZero + result < 0){
 			return "ham";
 		}
 		else{
@@ -249,7 +237,7 @@ public class LogisticRegressionClassifier{
 	public void run(String learnDirectoryPath, String testDirectoryPath, boolean stopWordCheck, double lembda, int noOfIterations){
 		int success = 0;
 		int total = 0;
-		double learningRate = 0.01;
+		double learningRate = 0.001;
 		HashMap<String,Double> weightMapLearned = new LogisticRegressionClassifier().regressionLearn(learnDirectoryPath, stopWordCheck, lembda, learningRate, noOfIterations);
 		File file = new File(testDirectoryPath);
 		File[] files = file.listFiles();
@@ -274,7 +262,9 @@ public class LogisticRegressionClassifier{
 				}
 				System.out.println("Accuracy for " + f.getName() + " " +  (double)success/total);
 			}
+			
 		}
+//		System.out.println("Average accuracy "  +  (double)success/total);
 
 	}
 

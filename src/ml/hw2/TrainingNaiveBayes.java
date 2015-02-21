@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class TrainingNaiveBayes {
-	//	private Utilities util2;
-//	private static String directoryPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/train";
-//	private static String directoryTestPath = "/Users/shobhitagarwal/Dropbox/UTD/Sem-2/Machine Learning/Project/Project 2/test";
 
 /**
  * 
