@@ -1,9 +1,4 @@
-Name : Shobhit Agarwal
-Net ID: sxa138130
-
-Extract sxa138130. 
-From the command prompt navigate to /agarwal_sxa138130/MachineLearningHW2/src and then run the following commands
-
+To compile
 javac ml/hw2/*.java
 
 and then run the following command to execute:
