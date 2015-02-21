@@ -177,17 +177,17 @@ public class LogisticRegressionClassifier{
 
 				double result = 0.0;
 				double weight = weightMap.get(word);
-				double y = 0;
+				double y = 1;			//changed this
 				for(String f: new String[]{"spam","ham"}){
 					//if(f.getName().charAt(0) != '.'){
 					if(f.equalsIgnoreCase("ham")){
 						wordCount = wordHamCount;
-						y = 1;
+//						y = 0;
 					}
 					else{
 						wordCount = wordSpamCount;
 
-						y = 0;
+//						y = 1;
 					}
 					//}
 

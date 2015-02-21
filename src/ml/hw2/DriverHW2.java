@@ -8,9 +8,11 @@ public class DriverHW2 {
 			System.exit(0);
 		}
 		else{
+			String learnFolderName = args[0];
+			String testFolderName = args[1];
 			
-			String directoryPathTraining = args[0];
-			String directoryPathTest = args[1];
+			String directoryPathTraining = System.getProperty("user.dir") + System.getProperty("file.separator")+ learnFolderName;
+			String directoryPathTest = System.getProperty("user.dir") + System.getProperty("file.separator")+ testFolderName;
 			
 			String stopWordPrint = args[2].toString();
 			boolean stopWords;
@@ -27,7 +29,6 @@ public class DriverHW2 {
 			int noOfIterations = Integer.parseInt(args[4]);
 			double lembda = Double.parseDouble(args[5]);
 			
-//			String[] classes = {"ham","spam"};
 			
 			//Naive bayes classifier.
 			TrainingNaiveBayes naiveBayes = new TrainingNaiveBayes();
