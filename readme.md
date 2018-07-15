@@ -18,10 +18,8 @@ and then run the following command to execute:
 
 
 > Here the number 1 & 2 differentiates between the classifiers.
-
->To change the number of iterations - change the ‘100’ in the above command to change the number of iterations for logistic regression
-
-> To change the value of lambda - change the value ‘0.5’ to the value of your choice
+  To change the number of iterations - change the ‘100’ in the above command to change the number of iterations for logistic     regression
+  To change the value of lambda - change the value ‘0.5’ to the value of your choice
 
 ### Customizations
 To change the data set to test the program on : 
